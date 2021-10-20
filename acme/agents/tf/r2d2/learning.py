@@ -124,6 +124,8 @@ class R2D2Learner(acme.Learner, tf2_savers.TFSaveable):
                                                         data.reward,
                                                         data.discount,
                                                         data.extras)
+    rewards = tf.cast(rewards, dtype='float32')
+    discounts = tf.cast(discounts, dtype='float32')
     unused_sequence_length, batch_size = actions.shape
 
     # Get initial state for the LSTM, either from replay or simply use zeros.
