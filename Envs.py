@@ -26,7 +26,7 @@ class MudbusEnv(dm_env.Environment):
     def test_agent(self):
         succsess_predicts = 0
         end = min(len(self.outputs), len(self.outputs)) - 1
-        obs = [self.to_obs(i) for i in range(self.episode_length, 4000)]
+        obs = [self.to_obs(i) for i in range(self.episode_length, self.episode_length+1000)]
         c = 0
         for i in range(len(obs)):
             c += 1
