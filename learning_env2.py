@@ -25,25 +25,26 @@ class SimpleNetwork2(networks.RNNCore):
     def unroll(self, inputs, state, sequence_length):
         return snt.static_unroll(self._net, inputs, state, sequence_length)
 
-env = MudbusEnv('../modbus_github_234_85.pcap', 12000, '10.1.1.234', '10.10.5.85', 6)
-environment_spec = specs.make_environment_spec(env)
-network = SimpleNetwork2(env)
-env.model = network
-agent = r2d2.R2D2(
-            environment_spec=environment_spec,
-            network=network,
-            batch_size=64, # smaller possible but bad, bigger (256) super bad
-            samples_per_insert=32,
-            min_replay_size=100,
-            store_lstm_state=True,
-            burn_in_length=4, # super sensible
-            trace_length=5, # sensible smaller bad bigger too
-            replay_period=4,
-            checkpoint=True,
-            # learning rate has to be lowered to avoid jumping|
-            learning_rate=1e-4,
-    )
-env.reset_time()
-loop = EnvironmentLoop(env, agent, logger=InMemoryLogger())
-env.reset()
-loop.run(2000)
+if __name__=='__main__':
+    env = MudbusEnv('../modbus_github_234_85.pcap', 12000, '10.1.1.234', '10.10.5.85', 6)
+    environment_spec = specs.make_environment_spec(env)
+    network = SimpleNetwork2(env)
+    agent = r2d2.R2D2(
+                environment_spec=environment_spec,
+                network=network,
+                batch_size=64, # smaller possible but bad, bigger (256) super bad
+                samples_per_insert=32,
+                min_replay_size=100,
+                store_lstm_state=True,
+                burn_in_length=4, # super sensible
+                trace_length=5, # sensible smaller bad bigger too
+                replay_period=4,
+                checkpoint=True,
+                # learning rate has to be lowered to avoid jumping|
+                learning_rate=1e-4,
+        )
+    env.model = agent
+    env.reset_time()
+    loop = EnvironmentLoop(env, agent, logger=InMemoryLogger())
+    env.reset()
+    loop.run(2000)
