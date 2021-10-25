@@ -21,6 +21,7 @@ class MudbusEnv(dm_env.Environment):
         self.timestamp = None
         self.epochs_count = 0
         self.model = None
+        self.log = open('log.txt', 'w')
 
     def test_agent(self):
         succsess_predicts = 0
@@ -32,7 +33,9 @@ class MudbusEnv(dm_env.Environment):
             predict = self.model.select_action(obs[i])
             if predict == self.outputs[self.episode_length + i]:
                 succsess_predicts += 1
-        print('ПРОВЕРКА НА ТЕСТОВЫХ ДАННЫХ: {0:.3f}%'.format(succsess_predicts / c * 100))
+        print('='*50, file=self.log)
+        print('\n ПРОВЕРКА НА ТЕСТОВЫХ ДАННЫХ: {0:.3f}%\n'.format(succsess_predicts / c * 100), file=self.log)
+        print('='*50, file=self.log)
 
     def step(self, action):
 
@@ -53,10 +56,11 @@ class MudbusEnv(dm_env.Environment):
             self.epochs_count += 1
             print(
                 'Эпоха {0} -- точность {1:.3f}% -- время {2}'.format(self.epochs_count, self.success / self.count * 100,
-                                                                     ep_time))
+                                                                     ep_time), file=self.log)
+            #print('printed')
             if self.epochs_count % 100 == 0:
                 self.test_agent()
-            print('=' * 50)
+            #print('=' * 50)
             self.success = 0
             return dm_env.termination(reward=reward, observation=self.observation())
         self.count += 1
