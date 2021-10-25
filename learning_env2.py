@@ -26,7 +26,7 @@ class SimpleNetwork2(networks.RNNCore):
         return snt.static_unroll(self._net, inputs, state, sequence_length)
 
 if __name__=='__main__':
-    env = MudbusEnv('../modbus_github_234_85.pcap', 12000, '10.1.1.234', '10.10.5.85', 6)
+    env = MudbusEnv('Datasets/modbus_github_234_85.pcap', 12000, '10.1.1.234', '10.10.5.85', 6)
     environment_spec = specs.make_environment_spec(env)
     network = SimpleNetwork2(env)
     agent = r2d2.R2D2(
