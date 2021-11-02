@@ -39,7 +39,7 @@ class MudbusEnv(dm_env.Environment):
         print('  {0:.3f}'.format(succsess_predicts / c * 100))
         print('='*50, file=self.log)
         print('\n ПРОВЕРКА НА ТЕСТОВЫХ ДАННЫХ: {0:.3f}%\n'.format(succsess_predicts / c * 100), file=self.log)
-        #print('пятерок {0:.3f}%\n'.format(fives/c * 100), file = self.log)
+        print('пятерок {0:.3f}%\n'.format(fives/c * 100), file = self.log)
         print('='*50, file=self.log)
 
     def step(self, action):

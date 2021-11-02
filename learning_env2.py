@@ -47,4 +47,4 @@ if __name__=='__main__':
     env.reset_time()
     loop = EnvironmentLoop(env, agent, logger=InMemoryLogger())
     env.reset()
-    loop.run(2000)
+    loop.run(5000)
