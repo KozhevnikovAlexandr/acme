@@ -36,6 +36,7 @@ class MudbusEnv(dm_env.Environment):
                 fives += 1
             if predict == self.outputs[self.episode_length + i]:
                 succsess_predicts += 1
+        print('TEST')
         print('  {0:.3f}'.format(succsess_predicts / c * 100))
         print('='*50, file=self.log)
         print('\n ПРОВЕРКА НА ТЕСТОВЫХ ДАННЫХ: {0:.3f}%\n'.format(succsess_predicts / c * 100), file=self.log)
@@ -62,7 +63,7 @@ class MudbusEnv(dm_env.Environment):
             print(
                 'Эпоха {0} -- точность {1:.3f}% -- время {2}'.format(self.epochs_count, self.success / self.count * 100,
                                                                      ep_time), file=self.log)
-            #print('printed')
+            print(self.success/self.count*100)
             if self.epochs_count % 50 == 0:
                 self.test_agent()
             #print('=' * 50)
