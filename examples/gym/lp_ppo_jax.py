@@ -13,32 +13,43 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Example running D4PG on the control suite."""
+"""Example running PPO in JAX on the OpenAI Gym.
 
+It runs the distributed agent using Launchpad runtime specified by
+--lp_launch_type flag.
+"""
 from absl import app
 from absl import flags
-from acme.agents.tf import d4pg
+from acme.agents.jax import ppo
 import helpers
-
 from acme.utils import lp_utils
 
 import launchpad as lp
 
 FLAGS = flags.FLAGS
-flags.DEFINE_string('domain', 'cartpole', 'Control suite domain name (str).')
-flags.DEFINE_string('task', 'balance', 'Control suite task name (str).')
+flags.DEFINE_string('task', 'MountainCarContinuous-v0',
+                    'GYM environment task (str).')
+flags.DEFINE_integer('seed', 0, 'Random seed.')
 
 
 def main(_):
-  environment_factory = lp_utils.partial_kwargs(
-      helpers.make_environment, domain_name=FLAGS.domain, task_name=FLAGS.task)
-
-  program = d4pg.DistributedD4PG(
+  task = FLAGS.task
+  environment_factory = lambda is_eval: helpers.make_environment(is_eval, task)
+  config = ppo.PPOConfig(
+      unroll_length=16,
+      num_minibatches=32,
+      num_epochs=10,
+      batch_size=2048 // 16)
+  program = ppo.DistributedPPO(
       environment_factory=environment_factory,
-      network_factory=lp_utils.partial_kwargs(d4pg.make_default_networks),
-      num_actors=2).build()
+      network_factory=ppo.make_gym_networks,
+      config=config,
+      seed=FLAGS.seed,
+      num_actors=4,
+      max_number_of_steps=1000).build()
 
-  lp.launch(program, lp.LaunchType.LOCAL_MULTI_PROCESSING)
+  # Launch experiment.
+  lp.launch(program, xm_resources=lp_utils.make_xm_docker_resources(program))
 
 
 if __name__ == '__main__':

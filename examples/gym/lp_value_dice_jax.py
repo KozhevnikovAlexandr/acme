@@ -13,7 +13,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Example running ValueDice in JAX on the OpenAI Gym."""
+"""Example running ValueDice in JAX on the OpenAI Gym.
+
+It runs the distributed agent using Launchpad runtime specified by
+--lp_launch_type flag.
+"""
 
 import functools
 
@@ -21,10 +25,12 @@ from absl import app
 from absl import flags
 from acme.agents.jax import value_dice
 import helpers
+from acme.utils import lp_utils
 import launchpad as lp
 
 FLAGS = flags.FLAGS
-flags.DEFINE_string('env_name', 'HalfCheetah-v2', 'GYM environment task (str).')
+flags.DEFINE_string('env_name', 'MountainCarContinuous-v0',
+                    'GYM environment task (str).')
 flags.DEFINE_string('dataset_name', 'd4rl_mujoco_halfcheetah/v0-medium',
                     'What dataset to use. '
                     'See the TFDS catalog for possible values.')
@@ -46,7 +52,7 @@ def main(_):
   program = agent.build()
 
   # Launch experiment.
-  lp.launch(program, lp.LaunchType.LOCAL_MULTI_PROCESSING)
+  lp.launch(program, xm_resources=lp_utils.make_xm_docker_resources(program))
 
 
 if __name__ == '__main__':
