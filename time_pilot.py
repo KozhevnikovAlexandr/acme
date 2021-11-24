@@ -3,7 +3,7 @@
 
 # In[1]:
 
-
+#import ALE
 import gym
 import acme
 from acme import specs
@@ -33,7 +33,7 @@ from acme import specs
 
 
 level = 'TimePilot-v0'
-num_episodes = 1000
+num_episodes = 10
 num_evaluate = 10
 
 
@@ -41,8 +41,8 @@ num_evaluate = 10
 
 
 def make_environment(level, evaluation: bool = False) -> dm_env.Environment:
-    env = gym.make(level, full_action_space=False)
-    max_episode_len = 108000 if evaluation else 50000
+    env = gym.make(level)
+    max_episode_len = 1000
     return wrappers.wrap_all(env, [
       wrappers.GymAtariAdapter,
       functools.partial(
@@ -121,10 +121,14 @@ if __name__=='__main__':
     network = networks.R2D2AtariNetwork(env_spec.actions.num_values)
     agent = r2d2.R2D2(env_spec, network, burn_in_length=40, trace_length=40, replay_period=1)
     loop = acme.EnvironmentLoop(env, agent)
-    loop.run(num_episodes)
-    frames = evaluate(env, agent, num_evaluate)
-    for ep in range(len(frames)):
-        save_video(frames[ep][0], frames[ep][1])
+    for i in range(1000):
+        print(i)
+        loop.run(1)
+    #loop.run(num_episodes)
+        if i%50 == 0:
+            frames = evaluate(env, agent, 5)
+            for ep in range(len(frames)):
+                save_video(frames[ep][0], frames[ep][1])
 
 
 # In[30]:
