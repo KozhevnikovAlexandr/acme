@@ -3,30 +3,16 @@
 
 # In[1]:
 
-#import ALE
 import gym
 import acme
-from acme import specs
-import tensorflow as tf
 import acme.tf.networks as networks 
 from acme import wrappers
-from acme.wrappers.gym_wrapper import GymWrapper, GymAtariAdapter
 import acme.agents.tf.r2d2 as r2d2
-from acme.agents.tf import dqn
 import dm_env
-import sonnet as snt
-from acme.tf.networks.atari import R2D2AtariNetwork
 import functools
-from absl import app
-from absl import flags
-from examples.atari.helpers import make_environment as me
-import numpy as np
-import copy
 import imageio 
 import base64
 import IPython
-import matplotlib.pyplot as plt
-from acme import specs
 
 
 # In[9]:
@@ -40,9 +26,9 @@ num_evaluate = 10
 # In[3]:
 
 
-def make_environment(level, evaluation: bool = False) -> dm_env.Environment:
+def make_environment(level) -> dm_env.Environment:
     env = gym.make(level)
-    max_episode_len = 1000
+    max_episode_len = 10_000
     return wrappers.wrap_all(env, [
       wrappers.GymAtariAdapter,
       functools.partial(
@@ -88,9 +74,9 @@ def evaluate(env, agent, steps=100):
 # In[6]:
 
 
-def save_video(frames, score=0, filename=None):
+def save_video(frames, score=0, iter=0, filename=None):
     if filename is None:
-        filename = r'videos/' + str(int(score)) + '.mp4'
+        filename = r'videos/{0}_{1}.mp4'.format(iter, score)
     with imageio.get_writer(filename, fps=15) as video:
         for frame in frames:
             video.append_data(frame)
@@ -99,7 +85,7 @@ def save_video(frames, score=0, filename=None):
 # In[7]:
 
 
-def display_video(frames, score=0, filename=None):
+def display_video(frames, score=0, iter=0, filename=None):
     if filename is None:
         filename = str(score) + '.mp4'
     with imageio.get_writer(filename, fps=10) as video:
@@ -121,14 +107,14 @@ if __name__=='__main__':
     network = networks.R2D2AtariNetwork(env_spec.actions.num_values)
     agent = r2d2.R2D2(env_spec, network, burn_in_length=40, trace_length=40, replay_period=1)
     loop = acme.EnvironmentLoop(env, agent)
-    for i in range(1000):
+    for i in range(100):
         print(i)
         loop.run(1)
     #loop.run(num_episodes)
-        if i%50 == 0:
+        if i % 50 == 0:
             frames = evaluate(env, agent, 5)
             for ep in range(len(frames)):
-                save_video(frames[ep][0], frames[ep][1])
+                save_video(frames[ep][0], frames[ep][1], i)
 
 
 # In[30]:
