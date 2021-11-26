@@ -111,7 +111,7 @@ if __name__=='__main__':
         print(i)
         loop.run(1)
     #loop.run(num_episodes)
-        if i % 50 == 0:
+        if i % 25 == 0:
             frames = evaluate(env, agent, 5)
             for ep in range(len(frames)):
                 save_video(frames[ep][0], frames[ep][1], i)

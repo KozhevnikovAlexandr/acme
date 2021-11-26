@@ -38,8 +38,8 @@ if __name__ == '__main__':
         min_replay_size=100,
         store_lstm_state=True,
         burn_in_length=4,  # super sensible
-        trace_length=5,  # sensible smaller bad bigger too
-        replay_period=4,
+        trace_length=20,  # sensible smaller bad bigger too
+        replay_period=3,
         checkpoint=True,
         # learning rate has to be lowered to avoid jumping|
         learning_rate=1e-4,
@@ -48,4 +48,4 @@ if __name__ == '__main__':
     env.reset_time()
     loop = EnvironmentLoop(env, agent, logger=InMemoryLogger())
     env.reset()
-    loop.run(5000)
+    loop.run(2000)

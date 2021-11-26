@@ -13,7 +13,7 @@ class SimpleNetwork2(networks.RNNCore):
         self._net = snt.DeepRNN([
             snt.LSTM(20),
             #snt.Flatten(),
-            snt.LSTM(516)
+            snt.Linear(516)
             ])
 
     def __call__(self, inputs, state):
@@ -37,7 +37,7 @@ if __name__=='__main__':
                 min_replay_size=100,
                 store_lstm_state=True,
                 burn_in_length=5, # super sensible
-                trace_length=15, # sensible smaller bad bigger too
+                trace_length=50, # sensible smaller bad bigger too
                 replay_period=4,
                 checkpoint=True,
                 # learning rate has to be lowered to avoid jumping|
